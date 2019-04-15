@@ -39,7 +39,7 @@ class ExtensionImplementationTest {
 
     @BeforeEach
     void prepareExtractor() {
-        DataExtension extension = new NewExtension();
+        DataExtension extension = new McMMOExtension();
         extractor = new ExtensionExtractor(extension);
     }
 
