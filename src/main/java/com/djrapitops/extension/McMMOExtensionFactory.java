@@ -35,7 +35,7 @@ public class McMMOExtensionFactory {
 
     private boolean isAvailable() {
         try {
-            Class.forName("com.gmail.nossr50.mcMMO");
+            Class.forName("com.gmail.nossr50.datatypes.skills.PrimarySkillType");
             return true;
         } catch (ClassNotFoundException e) {
             return false;
