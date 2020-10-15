@@ -79,6 +79,7 @@
             <groupId>com.github.mcMMO-Dev</groupId>
             <artifactId>mcMMO-Classic</artifactId>
             <version>1.6.1</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Platforms -->
