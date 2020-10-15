@@ -20,40 +20,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 package com.djrapitops.extension;
 
-import com.djrapitops.plan.extension.Caller;
-import com.djrapitops.plan.extension.DataExtension;
+import com.gmail.nossr50.api.ExperienceAPI;
+import com.gmail.nossr50.datatypes.database.PlayerStat;
+import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
+import com.gmail.nossr50.mcMMO;
+import org.bukkit.entity.Player;
 
-import java.util.Optional;
+import java.util.List;
 
-/**
- * Factory for the mcMMO DataExtension.
- *
- * @author Vankka
- */
-public class McMMOExtensionFactory {
+public class McMMOModern implements McMMO {
 
-    private boolean isAvailable(String className) {
-        try {
-            Class.forName(className);
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
+    @Override
+    public int getLevelOnline(Player player, String skill) {
+        return ExperienceAPI.getLevel(player, PrimarySkillType.getSkill(skill));
     }
 
-    public Optional<DataExtension> createExtension() {
-        if (isAvailable("com.gmail.nossr50.datatypes.skills.SkillType")) {
-            return Optional.of(new McMMOExtension(new McMMOLegacy()));
-        } else if (isAvailable("com.gmail.nossr50.datatypes.skills.PrimarySkillType")) {
-            return Optional.of(new McMMOExtension(new McMMOModern()));
-        }
-        return Optional.empty();
+    @Override
+    public boolean isChildSkill(String skill) {
+        return PrimarySkillType.getSkill(skill).isChildSkill();
     }
 
-    public void registerExpansion(Caller caller) {
-        McMMOListener listener = McMMOListenerFactory.createListener(caller);
-        listener.register();
+    @Override
+    public String getSkillName(String skill) {
+        return PrimarySkillType.getSkill(skill).getName();
+    }
+
+    @Override
+    public List<PlayerStat> readLeaderboard(String skill, int pageNumber, int statsPerPage) {
+        return mcMMO.getDatabaseManager().readLeaderboard(PrimarySkillType.getSkill(skill), pageNumber, statsPerPage);
     }
 }

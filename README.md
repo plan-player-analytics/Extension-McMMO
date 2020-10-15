@@ -1,5 +1,4 @@
-# Plan DataExtension: McMMO 
-
-DataExtension for [McMMO plugin](https://github.com/mcMMO-Dev/mcMMO)
+# Extension template
+Template for creating new Plan DataExtension API projects
 
 - [DataExtension API Documentation](https://github.com/plan-player-analytics/Plan/wiki/APIv5)
