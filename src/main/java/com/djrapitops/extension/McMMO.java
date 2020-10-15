@@ -20,40 +20,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 package com.djrapitops.extension;
 
-import com.djrapitops.plan.extension.Caller;
-import com.djrapitops.plan.extension.DataExtension;
+import com.gmail.nossr50.datatypes.database.PlayerStat;
+import org.bukkit.entity.Player;
 
-import java.util.Optional;
+import java.util.List;
 
-/**
- * Factory for the mcMMO DataExtension.
- *
- * @author Vankka
- */
-public class McMMOExtensionFactory {
+public interface McMMO {
 
-    private boolean isAvailable(String className) {
-        try {
-            Class.forName(className);
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
-    }
+    int getLevelOnline(Player player, String skill);
+    boolean isChildSkill(String skill);
+    String getSkillName(String skill);
+    List<PlayerStat> readLeaderboard(String skill, int pageNumber, int statsPerPage);
 
-    public Optional<DataExtension> createExtension() {
-        if (isAvailable("com.gmail.nossr50.datatypes.skills.SkillType")) {
-            return Optional.of(new McMMOExtension(new McMMOLegacy()));
-        } else if (isAvailable("com.gmail.nossr50.datatypes.skills.PrimarySkillType")) {
-            return Optional.of(new McMMOExtension(new McMMOModern()));
-        }
-        return Optional.empty();
-    }
-
-    public void registerExpansion(Caller caller) {
-        McMMOListener listener = McMMOListenerFactory.createListener(caller);
-        listener.register();
-    }
 }

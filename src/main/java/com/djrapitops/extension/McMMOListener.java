@@ -20,40 +20,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 package com.djrapitops.extension;
 
 import com.djrapitops.plan.extension.Caller;
-import com.djrapitops.plan.extension.DataExtension;
+import com.gmail.nossr50.events.experience.McMMOPlayerLevelDownEvent;
+import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 
-import java.util.Optional;
+public class McMMOListener implements Listener {
 
-/**
- * Factory for the mcMMO DataExtension.
- *
- * @author Vankka
- */
-public class McMMOExtensionFactory {
+    private final Caller caller;
 
-    private boolean isAvailable(String className) {
-        try {
-            Class.forName(className);
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
+    public McMMOListener(Caller caller) {
+        this.caller = caller;
     }
 
-    public Optional<DataExtension> createExtension() {
-        if (isAvailable("com.gmail.nossr50.datatypes.skills.SkillType")) {
-            return Optional.of(new McMMOExtension(new McMMOLegacy()));
-        } else if (isAvailable("com.gmail.nossr50.datatypes.skills.PrimarySkillType")) {
-            return Optional.of(new McMMOExtension(new McMMOModern()));
-        }
-        return Optional.empty();
+    public void register() {
+        Plugin plan = Bukkit.getPluginManager().getPlugin("Plan");
+        Bukkit.getPluginManager().registerEvents(this, plan);
     }
 
-    public void registerExpansion(Caller caller) {
-        McMMOListener listener = McMMOListenerFactory.createListener(caller);
-        listener.register();
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onLevelDown(McMMOPlayerLevelDownEvent event) {
+        Player player = event.getPlayer();
+        caller.updatePlayerData(player.getUniqueId(), player.getName());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onLevelUp(McMMOPlayerLevelUpEvent event) {
+        Player player = event.getPlayer();
+        caller.updatePlayerData(player.getUniqueId(), player.getName());
     }
 }

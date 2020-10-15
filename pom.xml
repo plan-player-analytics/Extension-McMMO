@@ -6,7 +6,7 @@
 
     <groupId>com.djrapitops</groupId>
     <artifactId>Extension-McMMO</artifactId>
-    <version>2.1.44-R0.2</version>
+    <version>2.1.149-R1.0</version>
     <build>
         <plugins>
             <plugin>
@@ -26,12 +26,17 @@
             <url>https://dl.bintray.com/rsl1122/Plan-repository/</url>
         </repository>
 
+        <repository>
+            <id>codemc-repo</id>
+            <url>https://repo.codemc.io/repository/maven-public/</url>
+        </repository>
+
         <!-- Platforms -->
 
-        <!--<repository>-->
-        <!--<id>spigot-repo</id>-->
-        <!--<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>-->
-        <!--</repository>-->
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
         <!--<repository>-->
         <!--<id>sponge-repo</id>-->
         <!--<url>https://repo.spongepowered.org/maven</url>-->
@@ -44,22 +49,36 @@
         <!--<id>velocity-repo</id>-->
         <!--<url>https://repo.velocitypowered.com/snapshots/</url>-->
         <!--</repository>-->
+
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <dependencies>
         <dependency> <!-- Plan API -->
             <groupId>com.djrapitops</groupId>
             <artifactId>Plan-api</artifactId>
-            <version>0.0.5</version>
+            <version>5.1-R0.4</version>
             <scope>provided</scope>
         </dependency>
 
         <!-- Plugin API Dependency -->
+
+        <!-- Modern, from codemc -->
         <dependency>
             <groupId>com.gmail.nossr50.mcMMO</groupId>
             <artifactId>mcMMO</artifactId>
-            <version>2.1.44</version>
+            <version>2.1.149</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- Classic, from jitpack -->
+        <dependency>
+            <groupId>com.github.mcMMO-Dev</groupId>
+            <artifactId>mcMMO-Classic</artifactId>
+            <version>1.6.1</version>
         </dependency>
 
         <!-- Platforms -->

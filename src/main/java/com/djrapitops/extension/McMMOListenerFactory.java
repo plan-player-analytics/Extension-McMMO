@@ -20,40 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 package com.djrapitops.extension;
 
 import com.djrapitops.plan.extension.Caller;
-import com.djrapitops.plan.extension.DataExtension;
 
-import java.util.Optional;
+public class McMMOListenerFactory {
 
-/**
- * Factory for the mcMMO DataExtension.
- *
- * @author Vankka
- */
-public class McMMOExtensionFactory {
-
-    private boolean isAvailable(String className) {
-        try {
-            Class.forName(className);
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
-    }
-
-    public Optional<DataExtension> createExtension() {
-        if (isAvailable("com.gmail.nossr50.datatypes.skills.SkillType")) {
-            return Optional.of(new McMMOExtension(new McMMOLegacy()));
-        } else if (isAvailable("com.gmail.nossr50.datatypes.skills.PrimarySkillType")) {
-            return Optional.of(new McMMOExtension(new McMMOModern()));
-        }
-        return Optional.empty();
-    }
-
-    public void registerExpansion(Caller caller) {
-        McMMOListener listener = McMMOListenerFactory.createListener(caller);
-        listener.register();
+    static McMMOListener createListener(Caller caller) {
+        return new McMMOListener(caller);
     }
 }
