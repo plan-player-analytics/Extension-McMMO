@@ -24,7 +24,6 @@ package com.djrapitops.extension;
 
 import com.djrapitops.plan.extension.CallEvents;
 import com.djrapitops.plan.extension.DataExtension;
-import com.djrapitops.plan.extension.NotReadyException;
 import com.djrapitops.plan.extension.annotation.PluginInfo;
 import com.djrapitops.plan.extension.annotation.StringProvider;
 import com.djrapitops.plan.extension.annotation.TableProvider;
@@ -55,7 +54,7 @@ public class McMMOExtension implements DataExtension {
 
     @Override
     public CallEvents[] callExtensionMethodsOn() {
-        return new CallEvents[] {
+        return new CallEvents[]{
                 CallEvents.PLAYER_JOIN,
                 CallEvents.PLAYER_LEAVE,
                 CallEvents.SERVER_EXTENSION_REGISTER,
@@ -73,9 +72,9 @@ public class McMMOExtension implements DataExtension {
         Player player = Bukkit.getPlayer(playerUUID);
         try {
             if (player != null) return mcMMO.getLevelOnline(player, skillType);
-        } catch (McMMOPlayerNotFoundException ignored) {
+        } catch (McMMOPlayerNotFoundException | NullPointerException ignored) {
             // this doesn't mean there is no player data, it might just not be loaded yet
-            //  so we try getting the 'offline' data
+            // so we try getting the 'offline' data
         }
 
         try {
@@ -95,7 +94,7 @@ public class McMMOExtension implements DataExtension {
                 if (xpToNextLevel <= 0) return "Max level";
                 return ExperienceAPI.getXP(player, skillType) + "/" + xpToNextLevel;
             }
-        } catch (McMMOPlayerNotFoundException ignored) {
+        } catch (McMMOPlayerNotFoundException | IndexOutOfBoundsException ignored) {
             // this doesn't mean there is no player data, it might just not be loaded yet
             //  so we try getting the 'offline' data
         }
@@ -104,7 +103,7 @@ public class McMMOExtension implements DataExtension {
             int xpToNextLevel = ExperienceAPI.getOfflineXPToNextLevel(playerUUID, skillType);
             if (xpToNextLevel <= 0) return "Max level";
             return ExperienceAPI.getOfflineXP(playerUUID, skillType) + "/" + xpToNextLevel;
-        } catch (InvalidPlayerException ignored) {
+        } catch (InvalidPlayerException | IndexOutOfBoundsException ignored) {
             return "Unknown";
         }
     }
@@ -119,7 +118,7 @@ public class McMMOExtension implements DataExtension {
     // Player data
 
     @TableProvider(
-        tableColor = Color.INDIGO
+            tableColor = Color.INDIGO
     )
     public Table levels(UUID playerUUID) {
         Table.Factory table = Table.builder()
@@ -145,17 +144,17 @@ public class McMMOExtension implements DataExtension {
             showInPlayerTable = true
     )
     public String highestSkill(UUID playerUUID) {
-        String skillName = "None";
-        int level = 0;
+        String highestSkill = "None";
+        int maxLevel = 0;
 
         for (String skill : SkillAPI.getSkills()) {
             int skillLevel = getLevel(playerUUID, skill);
-            if (level < skillLevel) {
-                level = skillLevel;
-                skillName = mcMMO.getSkillName(skill);
+            if (maxLevel < skillLevel) {
+                maxLevel = skillLevel;
+                highestSkill = mcMMO.getSkillName(skill);
             }
         }
-        return skillName + " (" + level + ")";
+        return highestSkill + " (" + maxLevel + ")";
     }
 
     // Server data
@@ -169,12 +168,9 @@ public class McMMOExtension implements DataExtension {
                 .columnFour("#3", Icon.called("user").build());
 
         for (String skill : SkillAPI.getSkills()) {
-            List<PlayerStat> skillLeaders;
-            try {
-                skillLeaders = mcMMO.readLeaderboard(skill, 1, 3);
-            } catch (NullPointerException ignored) {
-                throw new NotReadyException();
-            }
+            List<PlayerStat> skillLeaders = mcMMO.readLeaderboard(skill, 1, 3);
+
+            if (skillLeaders.isEmpty()) continue;
 
             table.addRow(
                     mcMMO.getSkillName(skill),

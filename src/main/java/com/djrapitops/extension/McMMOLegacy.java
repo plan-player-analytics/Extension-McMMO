@@ -63,7 +63,9 @@ public class McMMOLegacy implements McMMO {
             return (List<PlayerStat>) readLeaderboard.invoke(databaseManager, skillType, pageNumber, statsPerPage);
         } catch (InvocationTargetException e) {
             Throwable cause = e.getCause();
-            if (cause instanceof RuntimeException) throw (RuntimeException) cause;
+            if (cause instanceof RuntimeException && !(cause instanceof NullPointerException)) {
+                throw (RuntimeException) cause;
+            }
             return Collections.emptyList();
         } catch (Throwable ignored) {
             return Collections.emptyList();

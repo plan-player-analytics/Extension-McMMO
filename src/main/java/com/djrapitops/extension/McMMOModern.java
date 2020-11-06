@@ -29,6 +29,7 @@ import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import com.gmail.nossr50.mcMMO;
 import org.bukkit.entity.Player;
 
+import java.util.Collections;
 import java.util.List;
 
 public class McMMOModern implements McMMO {
@@ -49,7 +50,13 @@ public class McMMOModern implements McMMO {
     }
 
     @Override
-    public List<PlayerStat> readLeaderboard(String skill, int pageNumber, int statsPerPage) {
-        return mcMMO.getDatabaseManager().readLeaderboard(PrimarySkillType.getSkill(skill), pageNumber, statsPerPage);
+    public List<PlayerStat> readLeaderboard(String skillName, int pageNumber, int statsPerPage) {
+        try {
+            PrimarySkillType skill = PrimarySkillType.getSkill(skillName);
+            if (skill.isChildSkill()) return Collections.emptyList();
+            return mcMMO.getDatabaseManager().readLeaderboard(skill, pageNumber, statsPerPage);
+        } catch (NullPointerException ignored) {
+            return Collections.emptyList();
+        }
     }
 }
