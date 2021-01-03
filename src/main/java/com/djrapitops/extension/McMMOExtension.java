@@ -174,9 +174,9 @@ public class McMMOExtension implements DataExtension {
 
             table.addRow(
                     mcMMO.getSkillName(skill),
-                    getPlayerName(skillLeaders, 0),
-                    getPlayerName(skillLeaders, 1),
-                    getPlayerName(skillLeaders, 2)
+                    getPlayerName(skillLeaders, 0).orElse("-"),
+                    getPlayerName(skillLeaders, 1).orElse("-"),
+                    getPlayerName(skillLeaders, 2).orElse("-")
             );
         }
 
