@@ -72,7 +72,7 @@ public class McMMOExtension implements DataExtension {
         Player player = Bukkit.getPlayer(playerUUID);
         try {
             if (player != null) return mcMMO.getLevelOnline(player, skillType);
-        } catch (McMMOPlayerNotFoundException | NullPointerException ignored) {
+        } catch (McMMOPlayerNotFoundException | NullPointerException | IndexOutOfBoundsException ignored) {
             // this doesn't mean there is no player data, it might just not be loaded yet
             // so we try getting the 'offline' data
         }
