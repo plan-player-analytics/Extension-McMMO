@@ -1,5 +1,5 @@
 /*
- * Copyright(c) 2020 Risto Lahtela (Rsl1122)
+ * Copyright(c) 2020 Risto Lahtela (AuroraLS3)
  *
  * The MIT License(MIT)
  *
@@ -47,7 +47,7 @@ import java.util.UUID;
  * DataExtension for McMMO.
  *
  * @author Vankka
- * @author Rsl1122
+ * @author AuroraLS3
  */
 @PluginInfo(name = "mcMMO", iconName = "compass", iconFamily = Family.REGULAR, color = Color.INDIGO)
 public class McMMOExtension implements DataExtension {

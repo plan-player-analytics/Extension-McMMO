@@ -1,5 +1,5 @@
 /*
- * Copyright(c) 2020 Risto Lahtela (Rsl1122)
+ * Copyright(c) 2020 Risto Lahtela (AuroraLS3)
  *
  * The MIT License(MIT)
  *
