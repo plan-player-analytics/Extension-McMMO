@@ -24,6 +24,7 @@ package com.djrapitops.extension;
 
 import com.djrapitops.plan.extension.CallEvents;
 import com.djrapitops.plan.extension.DataExtension;
+import com.djrapitops.plan.extension.annotation.InvalidateMethod;
 import com.djrapitops.plan.extension.annotation.PluginInfo;
 import com.djrapitops.plan.extension.annotation.StringProvider;
 import com.djrapitops.plan.extension.annotation.TableProvider;
@@ -50,13 +51,13 @@ import java.util.UUID;
  * @author AuroraLS3
  */
 @PluginInfo(name = "mcMMO", iconName = "compass", iconFamily = Family.REGULAR, color = Color.INDIGO)
+@InvalidateMethod("leaderboard")
 public class McMMOExtension implements DataExtension {
 
     @Override
     public CallEvents[] callExtensionMethodsOn() {
         return new CallEvents[]{
                 CallEvents.PLAYER_JOIN,
-                CallEvents.PLAYER_LEAVE,
                 CallEvents.SERVER_EXTENSION_REGISTER,
                 CallEvents.SERVER_PERIODICAL
         };
@@ -159,7 +160,7 @@ public class McMMOExtension implements DataExtension {
 
     // Server data
 
-    @TableProvider(tableColor = Color.INDIGO)
+    //  DISABLED  @TableProvider(tableColor = Color.INDIGO)
     public Table leaderboard() {
         Table.Factory table = Table.builder()
                 .columnOne("Skill", Icon.called("star").build())
