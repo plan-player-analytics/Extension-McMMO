@@ -57,7 +57,6 @@ public class McMMOExtension implements DataExtension {
     @Override
     public CallEvents[] callExtensionMethodsOn() {
         return new CallEvents[]{
-                CallEvents.PLAYER_JOIN,
                 CallEvents.SERVER_EXTENSION_REGISTER,
                 CallEvents.SERVER_PERIODICAL
         };

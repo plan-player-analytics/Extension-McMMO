@@ -26,6 +26,7 @@ package com.djrapitops.extension;
 import com.djrapitops.plan.extension.Caller;
 import com.gmail.nossr50.events.experience.McMMOPlayerLevelDownEvent;
 import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
+import com.gmail.nossr50.events.players.McMMOPlayerProfileLoadEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -44,6 +45,12 @@ public class McMMOListener implements Listener {
     public void register() {
         Plugin plan = Bukkit.getPluginManager().getPlugin("Plan");
         Bukkit.getPluginManager().registerEvents(this, plan);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onLevelDown(McMMOPlayerProfileLoadEvent event) {
+        Player player = event.getPlayer();
+        caller.updatePlayerData(player.getUniqueId(), player.getName());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
