@@ -1,5 +1,5 @@
 /*
- * Copyright(c) 2020 Risto Lahtela (AuroraLS3)
+ * Copyright(c) 2020 AuroraLS3
  *
  * The MIT License(MIT)
  *
@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.djrapitops.extension;
+package net.playeranalytics.extension.mcmmo;
 
 import com.djrapitops.plan.extension.CallEvents;
 import com.djrapitops.plan.extension.DataExtension;

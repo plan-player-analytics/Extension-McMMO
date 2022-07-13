@@ -21,54 +21,31 @@
  * THE SOFTWARE.
  */
 
-package com.djrapitops.extension;
+package net.playeranalytics.extension.mcmmo;
 
-import com.gmail.nossr50.api.ExperienceAPI;
-import com.gmail.nossr50.database.DatabaseManager;
 import com.gmail.nossr50.datatypes.database.PlayerStat;
-import com.gmail.nossr50.datatypes.skills.SkillType;
-import com.gmail.nossr50.mcMMO;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Collections;
 import java.util.List;
 
-public class McMMOLegacy implements McMMO {
-
-    @SuppressWarnings("deprecation") // deprecation comes from modern
+public class NOOPMcMMO implements McMMO {
     @Override
     public int getLevelOnline(Player player, String skill) {
-        return ExperienceAPI.getLevel(player, skill);
+        return 0;
     }
 
     @Override
     public boolean isChildSkill(String skill) {
-        return SkillType.getSkill(skill).isChildSkill();
+        return false;
     }
 
     @Override
     public String getSkillName(String skill) {
-        return SkillType.getSkill(skill).getName();
+        return null;
     }
 
-    @SuppressWarnings("unchecked") // reflection
     @Override
     public List<PlayerStat> readLeaderboard(String skill, int pageNumber, int statsPerPage) {
-        DatabaseManager databaseManager = mcMMO.getDatabaseManager();
-        SkillType skillType = SkillType.getSkill(skill);
-        try {
-            Method readLeaderboard = databaseManager.getClass().getDeclaredMethod("readLeaderboard", SkillType.class, int.class, int.class);
-            return (List<PlayerStat>) readLeaderboard.invoke(databaseManager, skillType, pageNumber, statsPerPage);
-        } catch (InvocationTargetException e) {
-            Throwable cause = e.getCause();
-            if (cause instanceof RuntimeException && !(cause instanceof NullPointerException)) {
-                throw (RuntimeException) cause;
-            }
-            return Collections.emptyList();
-        } catch (Throwable ignored) {
-            return Collections.emptyList();
-        }
+        return null;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright(c) 2020 Risto Lahtela (AuroraLS3)
+ * Copyright(c) 2020 AuroraLS3
  *
  * The MIT License(MIT)
  *
@@ -21,41 +21,53 @@
  * THE SOFTWARE.
  */
 
-package com.djrapitops.extension;
+package net.playeranalytics.extension.mcmmo;
 
 import com.gmail.nossr50.api.ExperienceAPI;
+import com.gmail.nossr50.database.DatabaseManager;
 import com.gmail.nossr50.datatypes.database.PlayerStat;
-import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
+import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.mcMMO;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 
-public class McMMOModern implements McMMO {
+public class McMMOLegacy implements McMMO {
 
+    @SuppressWarnings("deprecation") // deprecation comes from modern
     @Override
     public int getLevelOnline(Player player, String skill) {
-        return ExperienceAPI.getLevel(player, PrimarySkillType.getSkill(skill));
+        return ExperienceAPI.getLevel(player, skill);
     }
 
     @Override
     public boolean isChildSkill(String skill) {
-        return PrimarySkillType.getSkill(skill).isChildSkill();
+        return SkillType.getSkill(skill).isChildSkill();
     }
 
     @Override
     public String getSkillName(String skill) {
-        return PrimarySkillType.getSkill(skill).getName();
+        return SkillType.getSkill(skill).getName();
     }
 
+    @SuppressWarnings("unchecked") // reflection
     @Override
-    public List<PlayerStat> readLeaderboard(String skillName, int pageNumber, int statsPerPage) {
+    public List<PlayerStat> readLeaderboard(String skill, int pageNumber, int statsPerPage) {
+        DatabaseManager databaseManager = mcMMO.getDatabaseManager();
+        SkillType skillType = SkillType.getSkill(skill);
         try {
-            PrimarySkillType skill = PrimarySkillType.getSkill(skillName);
-            if (skill.isChildSkill()) return Collections.emptyList();
-            return mcMMO.getDatabaseManager().readLeaderboard(skill, pageNumber, statsPerPage);
-        } catch (NullPointerException ignored) {
+            Method readLeaderboard = databaseManager.getClass().getDeclaredMethod("readLeaderboard", SkillType.class, int.class, int.class);
+            return (List<PlayerStat>) readLeaderboard.invoke(databaseManager, skillType, pageNumber, statsPerPage);
+        } catch (InvocationTargetException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof RuntimeException && !(cause instanceof NullPointerException)) {
+                throw (RuntimeException) cause;
+            }
+            return Collections.emptyList();
+        } catch (Throwable ignored) {
             return Collections.emptyList();
         }
     }

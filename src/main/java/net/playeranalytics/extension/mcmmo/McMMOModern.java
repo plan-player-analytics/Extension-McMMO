@@ -1,5 +1,5 @@
 /*
- * Copyright(c) 2020 Risto Lahtela (AuroraLS3)
+ * Copyright(c) 2020 AuroraLS3
  *
  * The MIT License(MIT)
  *
@@ -21,31 +21,42 @@
  * THE SOFTWARE.
  */
 
-package com.djrapitops.extension;
+package net.playeranalytics.extension.mcmmo;
 
+import com.gmail.nossr50.api.ExperienceAPI;
 import com.gmail.nossr50.datatypes.database.PlayerStat;
+import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
+import com.gmail.nossr50.mcMMO;
 import org.bukkit.entity.Player;
 
+import java.util.Collections;
 import java.util.List;
 
-public class NOOPMcMMO implements McMMO {
+public class McMMOModern implements McMMO {
+
     @Override
     public int getLevelOnline(Player player, String skill) {
-        return 0;
+        return ExperienceAPI.getLevel(player, PrimarySkillType.getSkill(skill));
     }
 
     @Override
     public boolean isChildSkill(String skill) {
-        return false;
+        return PrimarySkillType.getSkill(skill).isChildSkill();
     }
 
     @Override
     public String getSkillName(String skill) {
-        return null;
+        return PrimarySkillType.getSkill(skill).getName();
     }
 
     @Override
-    public List<PlayerStat> readLeaderboard(String skill, int pageNumber, int statsPerPage) {
-        return null;
+    public List<PlayerStat> readLeaderboard(String skillName, int pageNumber, int statsPerPage) {
+        try {
+            PrimarySkillType skill = PrimarySkillType.getSkill(skillName);
+            if (skill.isChildSkill()) return Collections.emptyList();
+            return mcMMO.getDatabaseManager().readLeaderboard(skill, pageNumber, statsPerPage);
+        } catch (NullPointerException ignored) {
+            return Collections.emptyList();
+        }
     }
 }
