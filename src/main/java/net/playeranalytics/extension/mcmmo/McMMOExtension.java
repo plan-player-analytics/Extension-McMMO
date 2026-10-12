@@ -24,13 +24,12 @@ package net.playeranalytics.extension.mcmmo;
 
 import com.djrapitops.plan.extension.CallEvents;
 import com.djrapitops.plan.extension.DataExtension;
-import com.djrapitops.plan.extension.annotation.InvalidateMethod;
-import com.djrapitops.plan.extension.annotation.PluginInfo;
-import com.djrapitops.plan.extension.annotation.StringProvider;
-import com.djrapitops.plan.extension.annotation.TableProvider;
+import com.djrapitops.plan.extension.ElementOrder;
+import com.djrapitops.plan.extension.annotation.*;
 import com.djrapitops.plan.extension.icon.Color;
 import com.djrapitops.plan.extension.icon.Family;
 import com.djrapitops.plan.extension.icon.Icon;
+import com.djrapitops.plan.extension.statistic.Statistics;
 import com.djrapitops.plan.extension.table.Table;
 import com.gmail.nossr50.api.ExperienceAPI;
 import com.gmail.nossr50.api.SkillAPI;
@@ -51,6 +50,8 @@ import java.util.UUID;
  * @author AuroraLS3
  */
 @PluginInfo(name = "mcMMO", iconName = "compass", iconFamily = Family.REGULAR, color = Color.INDIGO)
+@TabInfo(tab = "Skill levels", iconName = "magic", elementOrder = {ElementOrder.VALUES, ElementOrder.STATISTICS})
+@TabInfo(tab = "Skill experience", iconName = "tasks", elementOrder = ElementOrder.TABLE)
 @InvalidateMethod("leaderboard")
 public class McMMOExtension implements DataExtension {
 
@@ -110,7 +111,7 @@ public class McMMOExtension implements DataExtension {
 
     private Optional<String> getPlayerName(List<PlayerStat> from, int index) {
         if (index < from.size()) {
-            return Optional.ofNullable(from.get(index)).map(stat -> stat.name);
+            return Optional.ofNullable(from.get(index)).map(PlayerStat::playerName);
         }
         return Optional.empty();
     }
@@ -120,6 +121,7 @@ public class McMMOExtension implements DataExtension {
     @TableProvider(
             tableColor = Color.INDIGO
     )
+    @Tab("Skill experience")
     public Table levels(UUID playerUUID) {
         Table.Factory table = Table.builder()
                 .columnOne("Skill name", Icon.called("magic").of(Family.SOLID).build())
@@ -135,6 +137,20 @@ public class McMMOExtension implements DataExtension {
         return table.build();
     }
 
+    @StatisticsProvider(
+            tableColor = Color.INDIGO,
+            iconName = "magic"
+    )
+    @Tab("Skill levels")
+    public Statistics playerLevels(UUID playerUUID) {
+        Statistics statistics = Statistics.create();
+        for (String skill : SkillAPI.getSkills()) {
+            int level = getLevel(playerUUID, skill);
+            statistics.put(mcMMO.getSkillName(skill), (long) level);
+        }
+        return statistics;
+    }
+
     @StringProvider(
             text = "Highest Level Skill",
             description = "The highest mcmmo skill level",
@@ -143,6 +159,7 @@ public class McMMOExtension implements DataExtension {
             iconColor = Color.GREEN,
             showInPlayerTable = true
     )
+    @Tab("Skill levels")
     public String highestSkill(UUID playerUUID) {
         String highestSkill = "None";
         int maxLevel = 0;

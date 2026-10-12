@@ -27,33 +27,43 @@ import com.gmail.nossr50.api.ExperienceAPI;
 import com.gmail.nossr50.datatypes.database.PlayerStat;
 import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import com.gmail.nossr50.mcMMO;
+import com.gmail.nossr50.util.skills.SkillTools;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
 
 public class McMMOModern implements McMMO {
 
+    private static PrimarySkillType getSkill(String skill) {
+        return getSkillTools().matchSkill(skill);
+    }
+
+    private static @NotNull SkillTools getSkillTools() {
+        return mcMMO.p.getSkillTools();
+    }
+
     @Override
     public int getLevelOnline(Player player, String skill) {
-        return ExperienceAPI.getLevel(player, PrimarySkillType.getSkill(skill));
+        return ExperienceAPI.getLevel(player, getSkill(skill));
     }
 
     @Override
     public boolean isChildSkill(String skill) {
-        return PrimarySkillType.getSkill(skill).isChildSkill();
+        return SkillTools.isChildSkill(getSkill(skill));
     }
 
     @Override
     public String getSkillName(String skill) {
-        return PrimarySkillType.getSkill(skill).getName();
+        return getSkillTools().getCapitalizedPrimarySkillName(getSkill(skill));
     }
 
     @Override
     public List<PlayerStat> readLeaderboard(String skillName, int pageNumber, int statsPerPage) {
         try {
-            PrimarySkillType skill = PrimarySkillType.getSkill(skillName);
-            if (skill.isChildSkill()) return Collections.emptyList();
+            PrimarySkillType skill = getSkill(skillName);
+            if (SkillTools.isChildSkill(skill)) return Collections.emptyList();
             return mcMMO.getDatabaseManager().readLeaderboard(skill, pageNumber, statsPerPage);
         } catch (NullPointerException ignored) {
             return Collections.emptyList();
